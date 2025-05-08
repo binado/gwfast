@@ -307,25 +307,25 @@ def powerlaw_integrated_sensitivity_TR(f, Net, H0=67.66, Tobs=1., SNRval=1., bet
 
         if return_all:
 
-            integral = np.trapz(inv_omega_eff_ab_sq[fstart_idx:][:, None]*(fg[fstart_idx:]**(2.*betagrid[None, :])), x=fg[fstart_idx:], axis=0)
+            integral = np.trapezoid(inv_omega_eff_ab_sq[fstart_idx:][:, None]*(fg[fstart_idx:]**(2.*betagrid[None, :])), x=fg[fstart_idx:], axis=0)
             pls_ab[pair] = ((fg**betagrid[None,:])*SNRval/np.sqrt(2.*Tobs*glob.seconds_in_year*integral[None,:])).max(axis=1)
             pls_ab[pair][:fstart_idx] = 1.
 
     if N_T_dets > 0 and return_all:
         for Tdet in T_dets:
 
-            integral = np.trapz(sum_over_pairs_of_inv_omega_eff_ab_sq_T_dets[Tdet][:, None]*(fg**(2.*betagrid[None, :])), x=fg, axis=0)
+            integral = np.trapezoid(sum_over_pairs_of_inv_omega_eff_ab_sq_T_dets[Tdet][:, None]*(fg**(2.*betagrid[None, :])), x=fg, axis=0)
             pls_ab[Tdet] = ((fg**betagrid[None,:])*SNRval/np.sqrt(2.*Tobs*glob.seconds_in_year*integral[None,:])).max(axis=1)
 
     if not use_maximizer:
 
-        integral = np.trapz(sum_over_pairs_of_inv_omega_eff_ab_sq[:, None]*(fg**(2.*betagrid[None, :])), x=fg, axis=0)
+        integral = np.trapezoid(sum_over_pairs_of_inv_omega_eff_ab_sq[:, None]*(fg**(2.*betagrid[None, :])), x=fg, axis=0)
         pls_ab["net"] = ((fg**betagrid[None,:])*SNRval/np.sqrt(2.*Tobs*glob.seconds_in_year*integral[None,:])).max(axis=1)
 
     else:
 
         fref = 100.
-        minOmegaGWpow = lambda beta, fst : -(fst/fref)**beta/np.sqrt(np.trapz((f/fref)**(2*beta)*sum_over_pairs_of_inv_omega_eff_ab_sq, f, axis=0))*SNRval/np.sqrt(2*Tobs*glob.seconds_in_year)
+        minOmegaGWpow = lambda beta, fst : -(fst/fref)**beta/np.sqrt(np.trapezoid((f/fref)**(2*beta)*sum_over_pairs_of_inv_omega_eff_ab_sq, f, axis=0))*SNRval/np.sqrt(2*Tobs*glob.seconds_in_year)
         # Find the maximum value of OmegaGWpow for each frequency
         betas = np.zeros_like(f)
         OmegaGWpowMax = np.zeros_like(f)
@@ -459,8 +459,8 @@ def powerlaw_integrated_sensitivity(fmin, fmax, Net, fres=2000, H0=67.66, Tobs=1
 
         if return_all:
 
-            n2 = np.trapz(inv_omega_eff_ab_sq[fstart_idx:][:, None]*np.log(fg[fstart_idx:])*(fg[fstart_idx:]**(2.*betagrid[None, :])), x=fg[fstart_idx:], axis=0)
-            d2 = np.trapz(inv_omega_eff_ab_sq[fstart_idx:][:, None]*(fg[fstart_idx:]**(2.*betagrid[None, :])), x=fg[fstart_idx:], axis=0)
+            n2 = np.trapezoid(inv_omega_eff_ab_sq[fstart_idx:][:, None]*np.log(fg[fstart_idx:])*(fg[fstart_idx:]**(2.*betagrid[None, :])), x=fg[fstart_idx:], axis=0)
+            d2 = np.trapezoid(inv_omega_eff_ab_sq[fstart_idx:][:, None]*(fg[fstart_idx:]**(2.*betagrid[None, :])), x=fg[fstart_idx:], axis=0)
 
             fgrid_finer_ab_aux = np.exp(n2/d2)
             pls_ab_aux = (SNRval/np.sqrt(2.*Tobs*glob.seconds_in_year*d2))*np.exp(betagrid*n2/d2)
@@ -471,16 +471,16 @@ def powerlaw_integrated_sensitivity(fmin, fmax, Net, fres=2000, H0=67.66, Tobs=1
     if N_T_dets > 0 and return_all:
         for Tdet in T_dets:
 
-            n2 = np.trapz(sum_over_pairs_of_inv_omega_eff_ab_sq_T_dets[Tdet][:, None]*np.log(fg)*(fg**(2.*betagrid[None, :])), x=fg, axis=0)
-            d2 = np.trapz(sum_over_pairs_of_inv_omega_eff_ab_sq_T_dets[Tdet][:, None]*(fg**(2.*betagrid[None, :])), x=fg, axis=0)
+            n2 = np.trapezoid(sum_over_pairs_of_inv_omega_eff_ab_sq_T_dets[Tdet][:, None]*np.log(fg)*(fg**(2.*betagrid[None, :])), x=fg, axis=0)
+            d2 = np.trapezoid(sum_over_pairs_of_inv_omega_eff_ab_sq_T_dets[Tdet][:, None]*(fg**(2.*betagrid[None, :])), x=fg, axis=0)
             fgrid_finer_ab_aux = np.exp(n2/d2)
             pls_ab_aux = (SNRval/np.sqrt(2.*Tobs*glob.seconds_in_year*d2))*np.exp(betagrid*n2/d2)
             regular = np.where((pls_ab_aux != 0.) & (np.isfinite(pls_ab_aux)) & (np.isfinite(fgrid_finer_ab_aux)))[0]
             pls_ab[Tdet] = pls_ab_aux[regular]
             fgrid_finer_ab[Tdet] = fgrid_finer_ab_aux[regular]
 
-    n2 = np.trapz(sum_over_pairs_of_inv_omega_eff_ab_sq[:, None]*np.log(fg)*(fg**(2.*betagrid[None, :])), x=fg, axis=0)
-    d2 = np.trapz(sum_over_pairs_of_inv_omega_eff_ab_sq[:, None]*(fg**(2.*betagrid[None, :])), x=fg, axis=0)
+    n2 = np.trapezoid(sum_over_pairs_of_inv_omega_eff_ab_sq[:, None]*np.log(fg)*(fg**(2.*betagrid[None, :])), x=fg, axis=0)
+    d2 = np.trapezoid(sum_over_pairs_of_inv_omega_eff_ab_sq[:, None]*(fg**(2.*betagrid[None, :])), x=fg, axis=0)
 
     fgrid_finer_ab_aux = np.exp(n2/d2)
     pls_ab_aux = (SNRval/np.sqrt(2.*Tobs*glob.seconds_in_year*d2))*np.exp(betagrid*n2/d2)
@@ -589,20 +589,20 @@ def powerlaw_integrated_sensitivity_minimum(fmin, fmax, Net, fres=2000, H0=67.66
 
         if return_all:
 
-            integral1 = np.trapz(inv_omega_eff_ab_sq[fstart_idx:], x=f[fstart_idx:])
-            integral2 = np.trapz(inv_omega_eff_ab_sq[fstart_idx:]*np.log(f[fstart_idx:]), x=f[fstart_idx:])
+            integral1 = np.trapezoid(inv_omega_eff_ab_sq[fstart_idx:], x=f[fstart_idx:])
+            integral2 = np.trapezoid(inv_omega_eff_ab_sq[fstart_idx:]*np.log(f[fstart_idx:]), x=f[fstart_idx:])
             f_min_ab[pair] = np.exp(integral2/integral1)
             pls_min_ab[pair] = SNRval/np.sqrt(2.*Tobs*glob.seconds_in_year*integral1)
 
     for Tdet in T_dets:
 
-        integral1 = np.trapz(sum_over_pairs_of_inv_omega_eff_ab_sq_T_dets[Tdet], x=f)
-        integral2 = np.trapz(sum_over_pairs_of_inv_omega_eff_ab_sq_T_dets[Tdet]*np.log(f), x=f)
+        integral1 = np.trapezoid(sum_over_pairs_of_inv_omega_eff_ab_sq_T_dets[Tdet], x=f)
+        integral2 = np.trapezoid(sum_over_pairs_of_inv_omega_eff_ab_sq_T_dets[Tdet]*np.log(f), x=f)
         f_min_ab[Tdet] = np.exp(integral2/integral1)
         pls_min_ab[Tdet] = SNRval/np.sqrt(2.*Tobs*glob.seconds_in_year*integral1)
 
-    integral1 = np.trapz(sum_over_pairs_of_inv_omega_eff_ab_sq, x=f, axis=0)
-    integral2 = np.trapz(sum_over_pairs_of_inv_omega_eff_ab_sq*np.log(f), x=f)
+    integral1 = np.trapezoid(sum_over_pairs_of_inv_omega_eff_ab_sq, x=f, axis=0)
+    integral2 = np.trapezoid(sum_over_pairs_of_inv_omega_eff_ab_sq*np.log(f), x=f)
     f_min_ab["net"] = np.exp(integral2/integral1)
     pls_min_ab["net"] = SNRval/np.sqrt(2.*Tobs*glob.seconds_in_year*integral1)
 
@@ -712,7 +712,7 @@ def background_SNR_crosscorr(f, omega_gw, Net, H0=67.66, Tobs=1., is_ASD=True, r
             if f.ndim < omega_gw.ndim:
                 inv_omega_eff_ab_sq = inv_omega_eff_ab_sq[:, np.newaxis]
 
-            integral = np.trapz((omega_gw[fstart_idx:]**2.)*inv_omega_eff_ab_sq[fstart_idx:], f_integ[fstart_idx:], axis=0)
+            integral = np.trapezoid((omega_gw[fstart_idx:]**2.)*inv_omega_eff_ab_sq[fstart_idx:], f_integ[fstart_idx:], axis=0)
             snr[pair] = np.sqrt(2.*Tobs*glob.seconds_in_year)*np.sqrt(integral)
 
     if N_T_dets > 0 and return_all:
@@ -721,13 +721,13 @@ def background_SNR_crosscorr(f, omega_gw, Net, H0=67.66, Tobs=1., is_ASD=True, r
             if f.ndim < omega_gw.ndim:
                 sum_over_pairs_of_inv_omega_eff_ab_sq_T_dets[Tdet] = sum_over_pairs_of_inv_omega_eff_ab_sq_T_dets[Tdet][:, np.newaxis]
 
-            integral = np.trapz((omega_gw**2.)*sum_over_pairs_of_inv_omega_eff_ab_sq_T_dets[Tdet], f_integ, axis=0)
+            integral = np.trapezoid((omega_gw**2.)*sum_over_pairs_of_inv_omega_eff_ab_sq_T_dets[Tdet], f_integ, axis=0)
             snr[Tdet] = np.sqrt(2.*Tobs*glob.seconds_in_year)*np.sqrt(integral)
 
     if f.ndim < omega_gw.ndim:
         sum_over_pairs_of_inv_omega_eff_ab_sq = sum_over_pairs_of_inv_omega_eff_ab_sq[:, np.newaxis]
 
-    integral = np.trapz((omega_gw**2.)*sum_over_pairs_of_inv_omega_eff_ab_sq, f_integ, axis=0)
+    integral = np.trapezoid((omega_gw**2.)*sum_over_pairs_of_inv_omega_eff_ab_sq, f_integ, axis=0)
     snr["net"] = np.sqrt(2.*Tobs*glob.seconds_in_year)*np.sqrt(integral)
 
     return snr

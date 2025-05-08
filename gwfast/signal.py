@@ -131,7 +131,7 @@ class GWSignal(object):
         
         import scipy.integrate as igt
         mask = self.strainFreq >= fmin
-        self.strainInteg = igt.cumtrapz(self.strainFreq[mask]**(-7./3.)/S[mask], self.strainFreq[mask], initial = 0)
+        self.strainInteg = igt.cumulative_trapezoid(self.strainFreq[mask]**(-7./3.)/S[mask], self.strainFreq[mask], initial = 0)
         
         self.useEarthMotion = useEarthMotion
         self.noMotion = noMotion
@@ -267,11 +267,11 @@ class GWSignal(object):
                 for m in range(4):
                     tmpIntegrandC = IntegrandC(self.strainFreq[mask], Mc, tcgrid, m+1.)
                     tmpIntegrandS = IntegrandS(self.strainFreq[mask], Mc, tcgrid, m+1.)
-                    Igrid[i,j,:,m] = onp.trapz(tmpIntegrandC/noisegrids.T, fgrids.T, axis=0)
-                    Igrid[i,j,:,m+4] = onp.trapz(tmpIntegrandS/noisegrids.T, fgrids.T, axis=0)
+                    Igrid[i,j,:,m] = onp.trapezoid(tmpIntegrandC/noisegrids.T, fgrids.T, axis=0)
+                    Igrid[i,j,:,m+4] = onp.trapezoid(tmpIntegrandS/noisegrids.T, fgrids.T, axis=0)
                     
                 tmpIntegrand = IntegrandC(self.strainFreq[mask], Mc, tcgrid, 0.)
-                Igrid[i,j,:,8] = onp.trapz(tmpIntegrand/noisegrids.T, fgrids.T, axis=0)
+                Igrid[i,j,:,8] = onp.trapezoid(tmpIntegrand/noisegrids.T, fgrids.T, axis=0)
                 
         if self.verbose:
             print('Done in %.2fs \n' %(time.time() - in_time))
@@ -922,7 +922,7 @@ class GWSignal(object):
             for alpha in range(nParams):
                 for beta in range(alpha,nParams):
                     tmpElem = FisherIntegrands[alpha,:,beta,:].T
-                    Fisher[alpha,beta, :] = onp.trapz(tmpElem.real/strainGrids.real, fgrids.real, axis=0)*4.
+                    Fisher[alpha,beta, :] = onp.trapezoid(tmpElem.real/strainGrids.real, fgrids.real, axis=0)*4.
 
                     Fisher[beta,alpha, :] = Fisher[alpha,beta, :]
             if self.DutyFactor is not None:
@@ -948,7 +948,7 @@ class GWSignal(object):
                     for alpha in range(nParams):
                         for beta in range(alpha,nParams):
                             tmpElem = FisherIntegrands[alpha,:,beta,:].T
-                            tmpFisher[alpha,beta, :] = onp.trapz(tmpElem.real/strainGrids.real, fgrids.real, axis=0)*4.
+                            tmpFisher[alpha,beta, :] = onp.trapezoid(tmpElem.real/strainGrids.real, fgrids.real, axis=0)*4.
                             
                             tmpFisher[beta,alpha, :] = tmpFisher[alpha,beta, :]
                     if self.DutyFactor is not None:
@@ -974,7 +974,7 @@ class GWSignal(object):
                 for alpha in range(nParams):
                     for beta in range(alpha,nParams):
                         tmpElem = FisherIntegrands[alpha,:,beta,:].T
-                        tmpFisher[alpha,beta, :] = onp.trapz(tmpElem.real/strainGrids.real, fgrids.real, axis=0)*4.
+                        tmpFisher[alpha,beta, :] = onp.trapezoid(tmpElem.real/strainGrids.real, fgrids.real, axis=0)*4.
                             
                         tmpFisher[beta,alpha, :] = tmpFisher[alpha,beta, :]
                 if self.DutyFactor is not None:
@@ -996,7 +996,7 @@ class GWSignal(object):
                 for alpha in range(nParams):
                     for beta in range(alpha,nParams):
                         tmpElem = FisherIntegrands[alpha,:,beta,:].T
-                        tmpFisher[alpha,beta, :] = onp.trapz(tmpElem.real/strainGrids.real, fgrids.real, axis=0)*4.
+                        tmpFisher[alpha,beta, :] = onp.trapezoid(tmpElem.real/strainGrids.real, fgrids.real, axis=0)*4.
                             
                         tmpFisher[beta,alpha, :] = tmpFisher[alpha,beta, :]
                 if self.DutyFactor is not None:
@@ -1016,7 +1016,7 @@ class GWSignal(object):
                 for alpha in range(nParams):
                     for beta in range(alpha,nParams):
                         tmpElem = FisherIntegrands[alpha,:,beta,:].T
-                        tmpFisher[alpha,beta, :] = onp.trapz(tmpElem.real/strainGrids.real, fgrids.real, axis=0)*4.
+                        tmpFisher[alpha,beta, :] = onp.trapezoid(tmpElem.real/strainGrids.real, fgrids.real, axis=0)*4.
                             
                         tmpFisher[beta,alpha, :] = tmpFisher[alpha,beta, :]
                 if self.DutyFactor is not None:
@@ -1669,10 +1669,10 @@ class GWSignal(object):
                 for m in range(4):
                     tmpIntegrandC = IntegrandC(fgrids, Mc, tcoal, m+1.)
                     tmpIntegrandS = IntegrandS(fgrids, Mc, tcoal, m+1.)
-                    Igs[m,:] = onp.trapz(tmpIntegrandC/strainGrids, fgrids, axis=0)
-                    Igs[m+4,:] = onp.trapz(tmpIntegrandS/strainGrids, fgrids, axis=0)
+                    Igs[m,:] = onp.trapezoid(tmpIntegrandC/strainGrids, fgrids, axis=0)
+                    Igs[m+4,:] = onp.trapezoid(tmpIntegrandS/strainGrids, fgrids, axis=0)
                 tmpIntegrand = IntegrandC(fgrids, Mc, tcoal, 0.)
-                Igs[8,:] = onp.trapz(tmpIntegrand/strainGrids, fgrids, axis=0)
+                Igs[8,:] = onp.trapezoid(tmpIntegrand/strainGrids, fgrids, axis=0)
             
             
             if self.detector_shape=='L':
