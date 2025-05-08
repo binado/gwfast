@@ -3,7 +3,7 @@ name = "gwfast"
 version = "1.1.2"
 description = "A fisher matrix python package for GW studies"
 authors = [
-	"Francesco Iacovelli <francesco.iacovelli@unige.ch>", 
+	"Francesco Iacovelli <francesco.iacovelli@unige.ch>",
 	"Michele Mancarella <michele.mancarella@unige.ch>"
 ]
 maintainers = [
@@ -31,7 +31,7 @@ include = [
 
 [tool.poetry.dependencies]
 python = ">=3.9"
-numpy = "<=1.26.4"
+numpy = "==1.24"
 scipy = ">=1.6.3"
 astropy = "~6.0.0"
 h5py = "^3.2.1"
