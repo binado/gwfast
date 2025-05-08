@@ -267,11 +267,11 @@ class GWSignal(object):
                 for m in range(4):
                     tmpIntegrandC = IntegrandC(self.strainFreq[mask], Mc, tcgrid, m+1.)
                     tmpIntegrandS = IntegrandS(self.strainFreq[mask], Mc, tcgrid, m+1.)
-                    Igrid[i,j,:,m] = onp.trapezoid(tmpIntegrandC/noisegrids.T, fgrids.T, axis=0)
-                    Igrid[i,j,:,m+4] = onp.trapezoid(tmpIntegrandS/noisegrids.T, fgrids.T, axis=0)
+                    Igrid[i,j,:,m] = onp.trapz(tmpIntegrandC/noisegrids.T, fgrids.T, axis=0)
+                    Igrid[i,j,:,m+4] = onp.trapz(tmpIntegrandS/noisegrids.T, fgrids.T, axis=0)
                     
                 tmpIntegrand = IntegrandC(self.strainFreq[mask], Mc, tcgrid, 0.)
-                Igrid[i,j,:,8] = onp.trapezoid(tmpIntegrand/noisegrids.T, fgrids.T, axis=0)
+                Igrid[i,j,:,8] = onp.trapz(tmpIntegrand/noisegrids.T, fgrids.T, axis=0)
                 
         if self.verbose:
             print('Done in %.2fs \n' %(time.time() - in_time))
@@ -725,7 +725,7 @@ class GWSignal(object):
         if self.detector_shape=='L':    
             Aps, Acs = self.GWAmplitudes(evParams, fgrids)
             Atot = Aps*Aps + Acs*Acs
-            SNRsq = np.trapezoid(Atot/strainGrids, fgrids, axis=0)
+            SNRsq = np.trapz(Atot/strainGrids, fgrids, axis=0)
             if self.DutyFactor is not None:
                 excl = onp.random.choice([0,1],len(evParams['Mc']), p=[1.-self.DutyFactor,self.DutyFactor])
                 SNRsq = SNRsq*excl
@@ -735,7 +735,7 @@ class GWSignal(object):
                 for i in range(3):
                     Aps, Acs = self.GWAmplitudes(evParams, fgrids, rot=i*60.)
                     Atot = Aps*Aps + Acs*Acs
-                    tmpSNRsq = np.trapezoid(Atot/strainGrids, fgrids, axis=0)
+                    tmpSNRsq = np.trapz(Atot/strainGrids, fgrids, axis=0)
                     if self.DutyFactor is not None:
                         excl = onp.random.choice([0,1],len(evParams['Mc']), p=[1.-self.DutyFactor,self.DutyFactor])
                         tmpSNRsq = tmpSNRsq*excl
@@ -750,9 +750,9 @@ class GWSignal(object):
                 Atot2 = Aps2*Aps2 + Acs2*Acs2
                 Aps3, Acs3 = - (Aps1 + Aps2), - (Acs1 + Acs2)
                 Atot3 = Aps3*Aps3 + Acs3*Acs3
-                tmpSNRsq1 = np.trapezoid(Atot1/strainGrids, fgrids, axis=0)
-                tmpSNRsq2 = np.trapezoid(Atot2/strainGrids, fgrids, axis=0)
-                tmpSNRsq3 = np.trapezoid(Atot3/strainGrids, fgrids, axis=0)
+                tmpSNRsq1 = np.trapz(Atot1/strainGrids, fgrids, axis=0)
+                tmpSNRsq2 = np.trapz(Atot2/strainGrids, fgrids, axis=0)
+                tmpSNRsq3 = np.trapz(Atot3/strainGrids, fgrids, axis=0)
                 if self.DutyFactor is not None:
                     excl = onp.random.choice([0,1],len(evParams['Mc']), p=[1.-self.DutyFactor,self.DutyFactor])
                     tmpSNRsq1 = tmpSNRsq1 * excl
@@ -922,7 +922,7 @@ class GWSignal(object):
             for alpha in range(nParams):
                 for beta in range(alpha,nParams):
                     tmpElem = FisherIntegrands[alpha,:,beta,:].T
-                    Fisher[alpha,beta, :] = onp.trapezoid(tmpElem.real/strainGrids.real, fgrids.real, axis=0)*4.
+                    Fisher[alpha,beta, :] = onp.trapz(tmpElem.real/strainGrids.real, fgrids.real, axis=0)*4.
 
                     Fisher[beta,alpha, :] = Fisher[alpha,beta, :]
             if self.DutyFactor is not None:
@@ -948,7 +948,7 @@ class GWSignal(object):
                     for alpha in range(nParams):
                         for beta in range(alpha,nParams):
                             tmpElem = FisherIntegrands[alpha,:,beta,:].T
-                            tmpFisher[alpha,beta, :] = onp.trapezoid(tmpElem.real/strainGrids.real, fgrids.real, axis=0)*4.
+                            tmpFisher[alpha,beta, :] = onp.trapz(tmpElem.real/strainGrids.real, fgrids.real, axis=0)*4.
                             
                             tmpFisher[beta,alpha, :] = tmpFisher[alpha,beta, :]
                     if self.DutyFactor is not None:
@@ -974,7 +974,7 @@ class GWSignal(object):
                 for alpha in range(nParams):
                     for beta in range(alpha,nParams):
                         tmpElem = FisherIntegrands[alpha,:,beta,:].T
-                        tmpFisher[alpha,beta, :] = onp.trapezoid(tmpElem.real/strainGrids.real, fgrids.real, axis=0)*4.
+                        tmpFisher[alpha,beta, :] = onp.trapz(tmpElem.real/strainGrids.real, fgrids.real, axis=0)*4.
                             
                         tmpFisher[beta,alpha, :] = tmpFisher[alpha,beta, :]
                 if self.DutyFactor is not None:
@@ -996,7 +996,7 @@ class GWSignal(object):
                 for alpha in range(nParams):
                     for beta in range(alpha,nParams):
                         tmpElem = FisherIntegrands[alpha,:,beta,:].T
-                        tmpFisher[alpha,beta, :] = onp.trapezoid(tmpElem.real/strainGrids.real, fgrids.real, axis=0)*4.
+                        tmpFisher[alpha,beta, :] = onp.trapz(tmpElem.real/strainGrids.real, fgrids.real, axis=0)*4.
                             
                         tmpFisher[beta,alpha, :] = tmpFisher[alpha,beta, :]
                 if self.DutyFactor is not None:
@@ -1016,7 +1016,7 @@ class GWSignal(object):
                 for alpha in range(nParams):
                     for beta in range(alpha,nParams):
                         tmpElem = FisherIntegrands[alpha,:,beta,:].T
-                        tmpFisher[alpha,beta, :] = onp.trapezoid(tmpElem.real/strainGrids.real, fgrids.real, axis=0)*4.
+                        tmpFisher[alpha,beta, :] = onp.trapz(tmpElem.real/strainGrids.real, fgrids.real, axis=0)*4.
                             
                         tmpFisher[beta,alpha, :] = tmpFisher[alpha,beta, :]
                 if self.DutyFactor is not None:
@@ -1669,10 +1669,10 @@ class GWSignal(object):
                 for m in range(4):
                     tmpIntegrandC = IntegrandC(fgrids, Mc, tcoal, m+1.)
                     tmpIntegrandS = IntegrandS(fgrids, Mc, tcoal, m+1.)
-                    Igs[m,:] = onp.trapezoid(tmpIntegrandC/strainGrids, fgrids, axis=0)
-                    Igs[m+4,:] = onp.trapezoid(tmpIntegrandS/strainGrids, fgrids, axis=0)
+                    Igs[m,:] = onp.trapz(tmpIntegrandC/strainGrids, fgrids, axis=0)
+                    Igs[m+4,:] = onp.trapz(tmpIntegrandS/strainGrids, fgrids, axis=0)
                 tmpIntegrand = IntegrandC(fgrids, Mc, tcoal, 0.)
-                Igs[8,:] = onp.trapezoid(tmpIntegrand/strainGrids, fgrids, axis=0)
+                Igs[8,:] = onp.trapz(tmpIntegrand/strainGrids, fgrids, axis=0)
             
             
             if self.detector_shape=='L':
@@ -1805,46 +1805,46 @@ class GWSignal(object):
             self.wf_model = WF1
             h1 = self.GWstrain(fgrids, evParams1['Mc'], evParams1['eta'], evParams1['dL'], evParams1['theta'], evParams1['phi'], evParams1['iota'], evParams1['psi'], evParams1['tcoal'], evParams1['Phicoal'], evParams1['chi1z'], evParams1['chi2z'], evParams1['chi1x'], evParams1['chi2x'], evParams1['chi1y'], evParams1['chi2y'], evParams1['LambdaTilde'], evParams1['deltaLambda'], evParams1['ecc'], is_chi1chi2=True)
             h1sq = np.conjugate(h1)*h1
-            SNRh1 = np.sqrt(4.*np.trapezoid(h1sq.real/strainGrids, fgrids, axis=0))
+            SNRh1 = np.sqrt(4.*np.trapz(h1sq.real/strainGrids, fgrids, axis=0))
             self.wf_model = WF2
             h2 = self.GWstrain(fgrids, evParams2['Mc'], evParams2['eta'], evParams2['dL'], evParams2['theta'], evParams2['phi'], evParams2['iota'], evParams2['psi'], evParams2['tcoal'], evParams2['Phicoal'], evParams2['chi1z'], evParams2['chi2z'], evParams2['chi1x'], evParams2['chi2x'], evParams2['chi1y'], evParams2['chi2y'], evParams2['LambdaTilde'], evParams2['deltaLambda'], evParams2['ecc'], is_chi1chi2=True)
             h2sq = np.conjugate(h2)*h2
-            SNRh2 = np.sqrt(4.*np.trapezoid(h2sq.real/strainGrids, fgrids, axis=0))
+            SNRh2 = np.sqrt(4.*np.trapz(h2sq.real/strainGrids, fgrids, axis=0))
 
             overlap_h1h2 = h1*np.conjugate(h2)
-            overlap_int= 4.*np.trapezoid(overlap_h1h2.real/strainGrids, fgrids, axis=0)
+            overlap_int= 4.*np.trapz(overlap_h1h2.real/strainGrids, fgrids, axis=0)
 
         elif self.detector_shape=='T':
             self.wf_model = WF1
             h1_1 = self.GWstrain(fgrids, evParams1['Mc'], evParams1['eta'], evParams1['dL'], evParams1['theta'], evParams1['phi'], evParams1['iota'], evParams1['psi'], evParams1['tcoal'], evParams1['Phicoal'], evParams1['chi1z'], evParams1['chi2z'], evParams1['chi1x'], evParams1['chi2x'], evParams1['chi1y'], evParams1['chi2y'], evParams1['LambdaTilde'], evParams1['deltaLambda'], evParams1['ecc'], is_chi1chi2=True, rot=0.)
             h1_1sq = np.conjugate(h1_1)*h1_1
-            SNRh1_1sq = 4.*np.trapezoid(h1_1sq.real/strainGrids, fgrids, axis=0)
+            SNRh1_1sq = 4.*np.trapz(h1_1sq.real/strainGrids, fgrids, axis=0)
             h1_2 = self.GWstrain(fgrids, evParams1['Mc'], evParams1['eta'], evParams1['dL'], evParams1['theta'], evParams1['phi'], evParams1['iota'], evParams1['psi'], evParams1['tcoal'], evParams1['Phicoal'], evParams1['chi1z'], evParams1['chi2z'], evParams1['chi1x'], evParams1['chi2x'], evParams1['chi1y'], evParams1['chi2y'], evParams1['LambdaTilde'], evParams1['deltaLambda'], evParams1['ecc'], is_chi1chi2=True, rot=60.)
             h1_2sq = np.conjugate(h1_2)*h1_2
-            SNRh1_2sq = 4.*np.trapezoid(h1_2sq.real/strainGrids, fgrids, axis=0)
+            SNRh1_2sq = 4.*np.trapz(h1_2sq.real/strainGrids, fgrids, axis=0)
             h1_3 = - (h1_1 + h1_2)
             h1_3sq = np.conjugate(h1_3)*h1_3
-            SNRh1_3sq = 4.*np.trapezoid(h1_3sq.real/strainGrids, fgrids, axis=0)
+            SNRh1_3sq = 4.*np.trapz(h1_3sq.real/strainGrids, fgrids, axis=0)
             SNRh1 = np.sqrt(SNRh1_1sq + SNRh1_2sq + SNRh1_3sq)
 
             self.wf_model = WF2
             h2_1 = self.GWstrain(fgrids, evParams2['Mc'], evParams2['eta'], evParams2['dL'], evParams2['theta'], evParams2['phi'], evParams2['iota'], evParams2['psi'], evParams2['tcoal'], evParams2['Phicoal'], evParams2['chi1z'], evParams2['chi2z'], evParams2['chi1x'], evParams2['chi2x'], evParams2['chi1y'], evParams2['chi2y'], evParams2['LambdaTilde'], evParams2['deltaLambda'], evParams2['ecc'], is_chi1chi2=True, rot=0.)
             h2_1sq = np.conjugate(h2_1)*h2_1
-            SNRh2_1sq = 4.*np.trapezoid(h2_1sq.real/strainGrids, fgrids, axis=0)
+            SNRh2_1sq = 4.*np.trapz(h2_1sq.real/strainGrids, fgrids, axis=0)
             h2_2 = self.GWstrain(fgrids, evParams2['Mc'], evParams2['eta'], evParams2['dL'], evParams2['theta'], evParams2['phi'], evParams2['iota'], evParams2['psi'], evParams2['tcoal'], evParams2['Phicoal'], evParams2['chi1z'], evParams2['chi2z'], evParams2['chi1x'], evParams2['chi2x'], evParams2['chi1y'], evParams2['chi2y'], evParams2['LambdaTilde'], evParams2['deltaLambda'], evParams2['ecc'], is_chi1chi2=True, rot=60.)
             h2_2sq = np.conjugate(h2_2)*h2_2
-            SNRh2_2sq = 4.*np.trapezoid(h2_2sq.real/strainGrids, fgrids, axis=0)
+            SNRh2_2sq = 4.*np.trapz(h2_2sq.real/strainGrids, fgrids, axis=0)
             h2_3 = - (h2_1 + h2_2)
             h2_3sq = np.conjugate(h2_3)*h2_3
-            SNRh2_3sq = 4.*np.trapezoid(h2_3sq.real/strainGrids, fgrids, axis=0)
+            SNRh2_3sq = 4.*np.trapz(h2_3sq.real/strainGrids, fgrids, axis=0)
             SNRh2 = np.sqrt(SNRh2_1sq + SNRh2_2sq + SNRh2_3sq)
 
             overlap_h1h2_1 = h1_1*np.conjugate(h2_1)
-            overlap_int_1  = 4.*np.trapezoid(overlap_h1h2_1.real/strainGrids, fgrids, axis=0)
+            overlap_int_1  = 4.*np.trapz(overlap_h1h2_1.real/strainGrids, fgrids, axis=0)
             overlap_h1h2_2 = h1_2*np.conjugate(h2_2)
-            overlap_int_2  = 4.*np.trapezoid(overlap_h1h2_2.real/strainGrids, fgrids, axis=0)
+            overlap_int_2  = 4.*np.trapz(overlap_h1h2_2.real/strainGrids, fgrids, axis=0)
             overlap_h1h2_3 = h1_3*np.conjugate(h2_3)
-            overlap_int_3  = 4.*np.trapezoid(overlap_h1h2_3.real/strainGrids, fgrids, axis=0)
+            overlap_int_3  = 4.*np.trapz(overlap_h1h2_3.real/strainGrids, fgrids, axis=0)
 
             overlap_int = overlap_int_1 + overlap_int_2 + overlap_int_3
         # Restore the waveform
